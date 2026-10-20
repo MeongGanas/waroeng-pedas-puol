@@ -1,0 +1,68 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: waroeng_server
+    restart: unless-stopped
+    working_dir: /var/www/server
+    volumes:
+      - ./server:/var/www/server
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - waroeng_network
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: waroeng_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./server:/var/www/server
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - waroeng_network
+    depends_on:
+      - server
+
+  db:
+    image: mariadb:11.4
+    container_name: waroeng_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: waroeng_db
+      MYSQL_USER: waroeng_user
+      MYSQL_PASSWORD: waroeng_pass
+      MYSQL_ROOT_PASSWORD: root_waroeng_pass
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - waroeng_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: waroeng_pma
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    networks:
+      - waroeng_network
+    depends_on:
+      - db
+
+networks:
+  waroeng_network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+
