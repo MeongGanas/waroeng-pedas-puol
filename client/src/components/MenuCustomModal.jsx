@@ -1,18 +1,41 @@
 import React, { useState } from 'react';
-import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag, Utensils } from 'lucide-react';
 import SpicyLevelPicker from './SpicyLevelPicker';
 import { useCart } from '../context/CartContext';
+
+const SAMBAL_OPTIONS = [
+  { id: 'Sambal Bawang', label: 'Sambal Bawang', icon: '🧄', desc: 'Bawang gurih minyak panas pedas mantap' },
+  { id: 'Sambal Tomat', label: 'Sambal Tomat', icon: '🍅', desc: 'Segar asam manis pedas nikmat' },
+  { id: 'Sambal Tempong', label: 'Sambal Tempong', icon: '🌶️', desc: 'Sambal mentah terasi khas Banyuwangi super pedas' },
+];
+
+const SIZE_OPTIONS = [
+  { id: 'K', label: 'Kecil (K)' },
+  { id: 'J', label: 'Jumbo (J)' },
+  { id: 'SJ', label: 'Super Jumbo (SJ)' },
+];
 
 export default function MenuCustomModal({ menu, onClose }) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [spicyLevel, setSpicyLevel] = useState(menu?.is_spicy_customizable ? 1 : 0);
+  const [sambalType, setSambalType] = useState('Sambal Bawang');
+  const [portionSize, setPortionSize] = useState('J'); // Default Jumbo
   const [notes, setNotes] = useState('');
 
   if (!menu) return null;
 
+  const isDrink = menu?.category?.slug === 'minuman' || menu?.price <= 12000 && (menu?.name?.toLowerCase().includes('es ') || menu?.name?.toLowerCase().includes('teh'));
+
   const handleAdd = () => {
-    addToCart(menu, quantity, spicyLevel, notes);
+    addToCart(
+      menu,
+      quantity,
+      spicyLevel,
+      notes,
+      menu?.is_spicy_customizable ? sambalType : null,
+      isDrink ? portionSize : null
+    );
     onClose();
   };
 
@@ -50,13 +73,68 @@ export default function MenuCustomModal({ menu, onClose }) {
         <div className="p-4 sm:p-6 overflow-y-auto space-y-5">
           <p className="text-xs text-neutral-400 leading-relaxed">{menu.description}</p>
 
-          {/* Spicy Picker */}
+          {/* Pilihan Sambal (Khas Waroeng Pedes Puooll) */}
+          {menu.is_spicy_customizable && (
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-semibold text-neutral-200 flex items-center gap-1.5">
+                <Utensils className="w-4 h-4 text-red-500" />
+                Pilih Varian Sambal:
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {SAMBAL_OPTIONS.map(sambal => (
+                  <button
+                    key={sambal.id}
+                    type="button"
+                    onClick={() => setSambalType(sambal.id)}
+                    className={`p-2.5 rounded-xl border text-center transition-all ${
+                      sambalType === sambal.id
+                        ? 'border-red-500 bg-red-500/15 text-white font-bold ring-1 ring-red-500/50'
+                        : 'border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-neutral-200'
+                    }`}
+                  >
+                    <span className="text-base block mb-0.5">{sambal.icon}</span>
+                    <span className="text-xs block leading-tight">{sambal.label}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-neutral-400 italic">
+                💡 {SAMBAL_OPTIONS.find(s => s.id === sambalType)?.desc}
+              </p>
+            </div>
+          )}
+
+          {/* Spicy Level Picker (Play Group, TK, SD, SMP, SMA, Kuliah) */}
           {menu.is_spicy_customizable && menu.max_spicy_level > 0 && (
             <SpicyLevelPicker
               value={spicyLevel}
               onChange={setSpicyLevel}
               maxLevel={menu.max_spicy_level}
             />
+          )}
+
+          {/* Pilihan Ukuran untuk Minuman (K / J / SJ) */}
+          {isDrink && (
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-semibold text-neutral-200 block">
+                Pilih Ukuran Gelas:
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {SIZE_OPTIONS.map(size => (
+                  <button
+                    key={size.id}
+                    type="button"
+                    onClick={() => setPortionSize(size.id)}
+                    className={`py-2 px-3 rounded-xl border text-center text-xs transition-all ${
+                      portionSize === size.id
+                        ? 'border-red-500 bg-red-500/15 text-white font-bold ring-1 ring-red-500/50'
+                        : 'border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-neutral-200'
+                    }`}
+                  >
+                    {size.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Notes Input */}
@@ -68,7 +146,7 @@ export default function MenuCustomModal({ menu, onClose }) {
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Contoh: sambal dipisah, tanpa lalapan, es batu sedikit"
+              placeholder="Contoh: sambal dipisah, lalapan timun banyakin, es sedikit"
               className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-red-500"
             />
           </div>
@@ -117,4 +195,3 @@ export default function MenuCustomModal({ menu, onClose }) {
     </div>
   );
 }
-

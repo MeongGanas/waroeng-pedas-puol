@@ -186,14 +186,31 @@ export default function AdminPanel() {
                   <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider block">Daftar Menu:</span>
                   {order.items?.map((item, idx) => (
                     <div key={idx} className="text-xs">
-                      <div className="flex justify-between items-center text-neutral-200 font-semibold">
+                      <div className="flex justify-between items-center text-neutral-200 font-semibold gap-1">
                         <span>{item.quantity}x {item.menu?.name || 'Menu'}</span>
-                        {item.spicy_level > 0 && (
-                          <span className="text-[10px] bg-red-950 text-red-400 px-1.5 py-0.2 rounded border border-red-500/30 flex items-center gap-0.5">
-                            <Flame className="w-2.5 h-2.5 fill-red-500" />
-                            Lv. {item.spicy_level}
-                          </span>
-                        )}
+                        <div className="flex items-center gap-1 shrink-0">
+                          {item.sambal_type && (
+                            <span className="text-[10px] bg-neutral-800 text-amber-300 px-1.5 py-0.5 rounded font-medium">
+                              {item.sambal_type}
+                            </span>
+                          )}
+                          {item.portion_size && (
+                            <span className="text-[10px] bg-neutral-800 text-neutral-300 px-1.5 py-0.5 rounded">
+                              Uk. {item.portion_size}
+                            </span>
+                          )}
+                          {item.spicy_level > 0 && (
+                            <span className="text-[10px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-500/30 flex items-center gap-0.5 font-bold">
+                              <Flame className="w-2.5 h-2.5 fill-red-500" />
+                              {item.spicy_level === 1 ? 'Play Group' :
+                               item.spicy_level === 2 ? 'TK' :
+                               item.spicy_level === 3 ? 'SD' :
+                               item.spicy_level === 4 ? 'SMP' :
+                               item.spicy_level === 5 ? 'SMA' :
+                               item.spicy_level === 6 ? 'Kuliah 🔥' : `Lv. ${item.spicy_level}`}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       {item.notes && (
                         <p className="text-[10px] text-neutral-400 italic mt-0.5 pl-2 border-l border-neutral-700">

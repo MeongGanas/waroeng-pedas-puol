@@ -16,6 +16,8 @@ class OrderItem extends Model
         'quantity',
         'price',
         'spicy_level',
+        'sambal_type',
+        'portion_size',
         'notes',
     ];
 

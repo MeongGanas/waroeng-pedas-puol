@@ -39,7 +39,9 @@ class OrderController extends Controller
             'items' => 'required|array|min:1',
             'items.*.menu_id' => 'required|exists:menus,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'items.*.spicy_level' => 'nullable|integer|min:0|max:5',
+            'items.*.spicy_level' => 'nullable|integer|min:0|max:6',
+            'items.*.sambal_type' => 'nullable|string|max:50',
+            'items.*.portion_size' => 'nullable|string|max:50',
             'items.*.notes' => 'nullable|string|max:255',
         ]);
 
@@ -65,6 +67,8 @@ class OrderController extends Controller
                     'quantity' => $item['quantity'],
                     'price' => $menu->price,
                     'spicy_level' => $menu->is_spicy_customizable ? ($item['spicy_level'] ?? 0) : 0,
+                    'sambal_type' => $item['sambal_type'] ?? null,
+                    'portion_size' => $item['portion_size'] ?? null,
                     'notes' => $item['notes'] ?? null,
                 ];
             }
@@ -284,12 +288,35 @@ class OrderController extends Controller
         $text .= "Metode Bayar: {$payLabel}\n";
         $text .= "--------------------------------------\n";
 
+        $levelNames = [
+            0 => 'Nol Pedas',
+            1 => 'Play Group',
+            2 => 'TK',
+            3 => 'SD',
+            4 => 'SMP',
+            5 => 'SMA',
+            6 => 'Kuliah 🔥',
+        ];
+
         foreach ($order->items as $item) {
             $menuName = $item->menu ? $item->menu->name : 'Item';
-            $spicyText = $item->spicy_level > 0 ? " (Level {$item->spicy_level})" : "";
+            $details = [];
+
+            if ($item->portion_size) {
+                $details[] = "Ukuran: {$item->portion_size}";
+            }
+            if ($item->sambal_type) {
+                $details[] = "Sambal: {$item->sambal_type}";
+            }
+            if ($item->spicy_level > 0) {
+                $lvlName = $levelNames[$item->spicy_level] ?? "Level {$item->spicy_level}";
+                $details[] = "Level: {$lvlName}";
+            }
+
+            $detailStr = !empty($details) ? " (" . implode(' | ', $details) . ")" : "";
             $subtotalFormatted = number_format($item->price * $item->quantity, 0, ',', '.');
             
-            $text .= "• {$item->quantity}x {$menuName}{$spicyText} = Rp {$subtotalFormatted}\n";
+            $text .= "• {$item->quantity}x {$menuName}{$detailStr} = Rp {$subtotalFormatted}\n";
             if (!empty($item->notes)) {
                 $text .= "  _Catatan: {$item->notes}_\n";
             }

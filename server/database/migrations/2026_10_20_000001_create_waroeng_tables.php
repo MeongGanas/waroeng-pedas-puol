@@ -63,7 +63,9 @@ return new class extends Migration
             $table->foreignId('menu_id')->constrained()->cascadeOnDelete();
             $table->integer('quantity')->default(1);
             $table->decimal('price', 12, 2);
-            $table->integer('spicy_level')->default(0); // 0 to 5
+            $table->integer('spicy_level')->default(0); // 0 (Nol) to 6 (Kuliah)
+            $table->string('sambal_type', 50)->nullable(); // Sambal Bawang, Sambal Tomat, Sambal Tempong
+            $table->string('portion_size', 50)->nullable(); // K, J, SJ
             $table->string('notes')->nullable();
             $table->timestamps();
         });

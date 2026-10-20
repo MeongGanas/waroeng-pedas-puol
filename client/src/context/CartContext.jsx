@@ -48,11 +48,15 @@ export function CartProvider({ children }) {
     }
   }, [tableNumber]);
 
-  const addToCart = (menu, quantity = 1, spicyLevel = 0, notes = '') => {
+  const addToCart = (menu, quantity = 1, spicyLevel = 0, notes = '', sambalType = null, portionSize = null) => {
     setCartItems(prev => {
-      // Cari apakah item dengan menu_id, level pedas, dan catatan yang sama persis sudah ada di keranjang
+      // Cari apakah item dengan menu_id, level pedas, sambal, ukuran, dan catatan yang sama sudah ada di keranjang
       const existingIndex = prev.findIndex(
-        item => item.menu.id === menu.id && item.spicyLevel === spicyLevel && item.notes === notes
+        item => item.menu.id === menu.id && 
+                item.spicyLevel === spicyLevel && 
+                item.notes === notes &&
+                item.sambalType === sambalType &&
+                item.portionSize === portionSize
       );
 
       if (existingIndex > -1) {
@@ -61,7 +65,7 @@ export function CartProvider({ children }) {
         return updated;
       }
 
-      return [...prev, { menu, quantity, spicyLevel, notes }];
+      return [...prev, { menu, quantity, spicyLevel, notes, sambalType, portionSize }];
     });
   };
 

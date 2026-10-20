@@ -186,9 +186,14 @@ function MainApp() {
       {/* Footer */}
       <footer className="mt-auto border-t border-neutral-800/80 bg-neutral-950 py-6 text-center text-xs text-neutral-500">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} Waroeng Pedes Puooll. Dibuat dengan cinta & cabai rawit merah.</p>
+          <div className="text-left">
+            <p className="font-bold text-neutral-300">Waroeng Pedes Puooll</p>
+            <p className="text-[11px] text-neutral-500">
+              WA: 0852-3069-7857 • IG: @waroengpedespuooll • TikTok: @pedes_pooll
+            </p>
+          </div>
           <div className="flex items-center gap-4 text-neutral-400 font-medium">
-            <span>Buka: 10:00 - 22:00 WIB</span>
+            <span>Buka Setiap Hari: 10:00 - 22:00 WIB</span>
             <button
               onClick={() => setIsAdminView(!isAdminView)}
               className="text-neutral-600 hover:text-neutral-400 text-[11px] transition-colors"

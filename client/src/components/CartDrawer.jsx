@@ -67,7 +67,17 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }) {
                     {item.menu.name}
                   </h4>
 
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center flex-wrap gap-1.5 mb-1">
+                    {item.sambalType && (
+                      <span className="text-[10px] bg-neutral-800 text-amber-300 px-1.5 py-0.5 rounded font-medium">
+                        {item.sambalType}
+                      </span>
+                    )}
+                    {item.portionSize && (
+                      <span className="text-[10px] bg-neutral-800 text-neutral-300 px-1.5 py-0.5 rounded">
+                        Gelas {item.portionSize}
+                      </span>
+                    )}
                     {item.spicyLevel > 0 ? (
                       <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-red-400 bg-red-950/60 px-1.5 py-0.5 rounded border border-red-500/30">
                         <Flame className="w-2.5 h-2.5 fill-red-500" />

@@ -56,6 +56,8 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
           menu_id: item.menu.id,
           quantity: item.quantity,
           spicy_level: item.spicyLevel,
+          sambal_type: item.sambalType,
+          portion_size: item.portionSize,
           notes: item.notes,
         })),
       };
