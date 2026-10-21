@@ -17,11 +17,11 @@ export default function SpicyLevelPicker({ value = 0, onChange, maxLevel = 6 }) 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs sm:text-sm font-semibold text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs sm:text-sm font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
           <Flame className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
           Pilih Tingkat Kepedasan:
         </label>
-        <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
+        <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200 dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30">
           {availableLevels.find(l => l.level === value)?.grade || `Level ${value}`}
         </span>
       </div>
@@ -36,21 +36,21 @@ export default function SpicyLevelPicker({ value = 0, onChange, maxLevel = 6 }) 
               onClick={() => onChange(item.level)}
               className={`p-2 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between ${
                 isSelected
-                  ? 'border-red-500 ring-2 ring-red-500/50 bg-red-500/20 shadow-md shadow-red-600/20'
-                  : 'border-neutral-800 bg-neutral-950 hover:border-neutral-700 text-neutral-300'
+                  ? 'border-red-500 ring-2 ring-red-500/50 bg-red-50 text-red-700 dark:bg-red-500/20 dark:text-white shadow-md shadow-red-600/20'
+                  : 'border-neutral-200 bg-neutral-50 hover:border-neutral-300 text-neutral-600 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:text-neutral-300'
               }`}
             >
               <div className="flex items-center justify-between w-full mb-1">
-                <span className="font-extrabold text-[11px] text-white">
+                <span className={`font-extrabold text-[11px] ${isSelected ? 'text-red-600 dark:text-white' : 'text-neutral-900 dark:text-white'}`}>
                   {item.grade}
                 </span>
                 {item.level > 0 ? (
-                  <span className="text-[10px] text-red-400">🔥{item.level}</span>
+                  <span className="text-[10px] text-red-500">🔥{item.level}</span>
                 ) : (
-                  <span className="text-[10px] text-neutral-500">🚫</span>
+                  <span className="text-[10px] text-neutral-400">🚫</span>
                 )}
               </div>
-              <span className="text-[10px] leading-tight text-neutral-400 font-medium">
+              <span className={`text-[10px] leading-tight font-medium ${isSelected ? 'text-red-600/80 dark:text-neutral-300' : 'text-neutral-500 dark:text-neutral-400'}`}>
                 {item.label}
               </span>
             </button>
@@ -58,8 +58,8 @@ export default function SpicyLevelPicker({ value = 0, onChange, maxLevel = 6 }) 
         })}
       </div>
 
-      <p className="text-xs text-neutral-400 italic bg-neutral-950 p-2.5 rounded-xl border border-neutral-800/80">
-        🌶️ <span className="text-red-400 font-semibold">{availableLevels.find(l => l.level === value)?.grade}:</span> {availableLevels.find(l => l.level === value)?.desc}
+      <p className="text-xs text-neutral-600 dark:text-neutral-400 italic bg-neutral-50 dark:bg-neutral-950 p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800/80">
+        🌶️ <span className="text-red-600 dark:text-red-400 font-semibold">{availableLevels.find(l => l.level === value)?.grade}:</span> {availableLevels.find(l => l.level === value)?.desc}
       </p>
     </div>
   );
