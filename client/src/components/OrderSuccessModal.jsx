@@ -163,7 +163,7 @@ export default function OrderSuccessModal({ orderData, onClose }) {
           {currentOrder.payment_method === 'online' && !isPaid && (
             <button
               onClick={handlePayNow}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-lg shadow-emerald-700/30 transition-all active:scale-95"
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-lg shadow-emerald-700/20 transition-all active:scale-95"
             >
               <CreditCard className="w-4 h-4" />
               <span>Buka QRIS / Bayar Online Sekarang</span>

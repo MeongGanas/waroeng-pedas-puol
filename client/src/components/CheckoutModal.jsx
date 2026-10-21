@@ -270,7 +270,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:from-neutral-700 disabled:to-neutral-800 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm shadow-xl shadow-red-700/30 transition-all active:scale-95 disabled:pointer-events-none"
+              className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 disabled:bg-neutral-800 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm shadow-xl shadow-red-700/20 transition-all active:scale-95 disabled:pointer-events-none"
             >
               {isSubmitting ? (
                 <>

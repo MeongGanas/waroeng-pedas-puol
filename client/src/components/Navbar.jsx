@@ -10,7 +10,7 @@ export default function Navbar({ onOpenCart }) {
       <div className="max-w-6xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-2">
         {/* Brand Logo & Tagline */}
         <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center shadow-lg shadow-red-600/30 shrink-0">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/20 shrink-0">
             <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-white animate-pulse" />
           </div>
           <div className="min-w-0">
@@ -53,7 +53,7 @@ export default function Navbar({ onOpenCart }) {
           {/* Cart Button */}
           <button
             onClick={onOpenCart}
-            className="relative flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm shadow-md shadow-red-700/30 transition-all active:scale-95 shrink-0"
+            className="relative flex items-center gap-1.5 sm:gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm shadow-md shadow-red-700/20 transition-all active:scale-95 shrink-0"
           >
             <ShoppingBag className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">

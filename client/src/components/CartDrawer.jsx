@@ -138,7 +138,7 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }) {
                 onClose();
                 onOpenCheckout();
               }}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3.5 px-4 rounded-xl text-sm shadow-xl shadow-red-700/30 transition-transform active:scale-95"
+              className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm shadow-xl shadow-red-700/20 transition-transform active:scale-95"
             >
               <span>Lanjut ke Pembayaran</span>
               <ArrowRight className="w-4 h-4" />

@@ -54,7 +54,6 @@ export default function MenuCustomModal({ menu, onClose }) {
             alt={menu.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-transparent"></div>
           
           <button
             onClick={onClose}
@@ -185,7 +184,7 @@ export default function MenuCustomModal({ menu, onClose }) {
 
           <button
             onClick={handleAdd}
-            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-lg shadow-red-700/25 transition-transform active:scale-95"
+            className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-lg shadow-red-700/20 transition-transform active:scale-95"
           >
             <ShoppingBag className="w-4 h-4" />
             Tambah ke Keranjang
