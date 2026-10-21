@@ -1,8 +1,8 @@
 import React from 'react';
-import { Flame, ShoppingBag, MapPin } from 'lucide-react';
+import { Flame, ShoppingBag, MapPin, History } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
-export default function Navbar({ onOpenCart }) {
+export default function Navbar({ onOpenCart, onOpenHistory }) {
   const { totalItemsCount, totalAmount, tableNumber, setTableNumber } = useCart();
 
   return (
@@ -25,7 +25,7 @@ export default function Navbar({ onOpenCart }) {
           </div>
         </div>
 
-        {/* Right Section: Nomor Meja & Tombol Keranjang */}
+        {/* Right Section: Nomor Meja, Riwayat & Tombol Keranjang */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Table Number Display / Input */}
           {tableNumber ? (
@@ -49,6 +49,16 @@ export default function Navbar({ onOpenCart }) {
               />
             </div>
           )}
+
+          {/* Riwayat Pemesanan Button */}
+          <button
+            onClick={onOpenHistory}
+            className="flex items-center gap-1.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold transition-all shrink-0"
+            title="Riwayat Pesanan Saya"
+          >
+            <History className="w-4 h-4 text-neutral-400" />
+            <span className="hidden md:inline">Riwayat</span>
+          </button>
 
           {/* Cart Button */}
           <button

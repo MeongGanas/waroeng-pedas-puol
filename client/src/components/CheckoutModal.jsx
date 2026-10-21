@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CreditCard, Banknote, MapPin, Phone, User, ShieldCheck, Loader2 } from 'lucide-react';
+import { X, Banknote, MapPin, Phone, User, ShieldCheck, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { api } from '../services/api';
 
@@ -8,9 +8,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
 
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [orderType, setOrderType] = useState('dine_in'); // dine_in, takeaway, delivery
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('online'); // online, cashier
+  const [orderType, setOrderType] = useState('dine_in'); // dine_in, takeaway
   const [notes, setNotes] = useState('');
   
   // Anti-double click lock
@@ -35,10 +33,6 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
       setErrorMessage('Silakan isi Nomor Meja Anda.');
       return;
     }
-    if (orderType === 'delivery' && !deliveryAddress.trim()) {
-      setErrorMessage('Silakan isi Alamat Pengantaran.');
-      return;
-    }
 
     setErrorMessage('');
     setIsSubmitting(true);
@@ -49,8 +43,8 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
         customer_phone: customerPhone,
         order_type: orderType,
         table_number: orderType === 'dine_in' ? tableNumber : null,
-        delivery_address: orderType === 'delivery' ? deliveryAddress : null,
-        payment_method: paymentMethod,
+        delivery_address: null,
+        payment_method: 'cashier', // Pembayaran langsung di kasir
         notes: notes,
         items: cartItems.map(item => ({
           menu_id: item.menu.id,
@@ -63,6 +57,20 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
       };
 
       const result = await api.createOrder(payload);
+
+      // Simpan riwayat pesanan ke localStorage pengguna
+      try {
+        const history = JSON.parse(localStorage.getItem('waroeng_customer_order_history') || '[]');
+        const newHistoryItem = {
+          ...result.data.order,
+          whatsapp_url: result.data.whatsapp_url,
+          created_at: new Date().toISOString(),
+        };
+        history.unshift(newHistoryItem);
+        localStorage.setItem('waroeng_customer_order_history', JSON.stringify(history));
+      } catch (errHistory) {
+        console.error('Gagal menyimpan riwayat pesanan lokal:', errHistory);
+      }
       
       // Clear cart upon successful order creation
       clearCart();
@@ -82,7 +90,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-neutral-800 flex items-center justify-between bg-neutral-950/60">
+        <div className="p-4 sm:p-5 border-b border-neutral-800 flex items-center justify-between bg-neutral-950">
           <div>
             <h3 className="font-extrabold text-base sm:text-lg text-white">Konfirmasi Pemesanan</h3>
             <p className="text-xs text-neutral-400">Total Tagihan: <span className="font-bold text-red-400">Rp {totalAmount.toLocaleString('id-ID')}</span></p>
@@ -99,7 +107,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 max-h-[75vh] overflow-y-auto">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-red-950/50 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-red-950 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
               <span>⚠️</span>
               <span>{errorMessage}</span>
             </div>
@@ -117,7 +125,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 required
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Contoh: Farrel / Mas Jerry"
+                placeholder="Contoh: Farrel / Jerry"
                 className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-red-500"
               />
             </div>
@@ -138,35 +146,37 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
             </div>
           </div>
 
-          {/* Order Type */}
+          {/* Order Type: Hanya Makan di Meja & Bawa Pulang */}
           <div>
             <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
               Tipe Pesanan:
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               {[
-                { id: 'dine_in', label: 'Makan di Meja', icon: '🍽️' },
-                { id: 'takeaway', label: 'Bawa Pulang', icon: '🛍️' },
-                { id: 'delivery', label: 'Kirim Alamat', icon: '🛵' },
+                { id: 'dine_in', label: 'Makan di Meja', icon: '🍽️', desc: 'Disajikan langsung ke meja' },
+                { id: 'takeaway', label: 'Bawa Pulang', icon: '🛍️', desc: 'Dibungkus untuk dibawa pulang' },
               ].map(type => (
                 <button
                   key={type.id}
                   type="button"
                   onClick={() => setOrderType(type.id)}
-                  className={`p-2.5 rounded-xl border text-center transition-all ${
+                  className={`p-3 rounded-2xl border text-left transition-all ${
                     orderType === type.id
-                      ? 'border-red-500 bg-red-500/15 text-white font-bold'
+                      ? 'border-red-500 bg-red-950/40 text-white font-bold ring-1 ring-red-500'
                       : 'border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-neutral-200'
                   }`}
                 >
-                  <span className="text-base block mb-0.5">{type.icon}</span>
-                  <span className="text-[11px] block">{type.label}</span>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-lg">{type.icon}</span>
+                    <span className="text-xs font-bold text-white">{type.label}</span>
+                  </div>
+                  <span className="text-[10px] text-neutral-400 block">{type.desc}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Conditional Input Meja / Alamat */}
+          {/* Input Meja jika Dine In */}
           {orderType === 'dine_in' && (
             <div>
               <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5 mb-1.5">
@@ -178,76 +188,29 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 required
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
-                placeholder="Contoh: 04 / Meja Depan"
+                placeholder="Contoh: 05 / Meja Depan"
                 className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-red-500"
               />
             </div>
           )}
 
-          {orderType === 'delivery' && (
-            <div>
-              <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5 mb-1.5">
-                <MapPin className="w-3.5 h-3.5 text-neutral-400" />
-                Alamat Lengkap Pengantaran:
-              </label>
-              <textarea
-                rows={2}
-                required
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                placeholder="Alamat jalan, nomor rumah, patokan..."
-                className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-red-500"
-              />
-            </div>
-          )}
-
-          {/* Dual Payment Options */}
+          {/* Info Pembayaran di Kasir */}
           <div>
             <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
-              Pilih Metode Pembayaran:
+              Metode Pembayaran:
             </label>
-            <div className="grid grid-cols-2 gap-2.5">
-              {/* Opsi 1: Bayar Online */}
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('online')}
-                className={`p-3 rounded-2xl border text-left transition-all ${
-                  paymentMethod === 'online'
-                    ? 'border-emerald-500 bg-emerald-950/20 ring-1 ring-emerald-500/50'
-                    : 'border-neutral-800 bg-neutral-950 hover:border-neutral-700'
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div className={`p-1.5 rounded-lg ${paymentMethod === 'online' ? 'bg-emerald-500 text-neutral-950' : 'bg-neutral-800 text-neutral-400'}`}>
-                    <CreditCard className="w-4 h-4" />
-                  </div>
-                  <span className="font-bold text-xs text-white">Bayar di Web</span>
-                </div>
-                <p className="text-[10px] text-neutral-400 leading-tight">
-                  QRIS (BCA, GoPay, Dana, dll.) & Virtual Account langsung dari HP.
-                </p>
-              </button>
-
-              {/* Opsi 2: Bayar di Kasir */}
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('cashier')}
-                className={`p-3 rounded-2xl border text-left transition-all ${
-                  paymentMethod === 'cashier'
-                    ? 'border-amber-500 bg-amber-950/20 ring-1 ring-amber-500/50'
-                    : 'border-neutral-800 bg-neutral-950 hover:border-neutral-700'
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div className={`p-1.5 rounded-lg ${paymentMethod === 'cashier' ? 'bg-amber-500 text-neutral-950' : 'bg-neutral-800 text-neutral-400'}`}>
-                    <Banknote className="w-4 h-4" />
-                  </div>
-                  <span className="font-bold text-xs text-white">Bayar di Kasir</span>
-                </div>
-                <p className="text-[10px] text-neutral-400 leading-tight">
-                  Bayar tunai / QRIS manual di meja kasir setelah memesan.
-                </p>
-              </button>
+            <div className="bg-neutral-950 border border-neutral-800 p-3.5 rounded-2xl flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
+                <Banknote className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="font-bold text-xs text-white block mb-0.5">
+                  Bayar di Kasir (Tunai / QRIS Kasir)
+                </span>
+                <span className="text-[11px] text-neutral-400 leading-tight block">
+                  Pesanan akan langsung dimasak. Pembayaran dilakukan di kasir dengan menyebutkan nomor pesanan.
+                </span>
+              </div>
             </div>
           </div>
 
@@ -260,7 +223,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Contoh: tolong buat cepat, sendok plastik 2"
+              placeholder="Contoh: tolong jangan terlalu asin, sendok 2"
               className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-red-500"
             />
           </div>
@@ -275,19 +238,17 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Memproses Pesanan Aman...</span>
+                  <span>Memproses Pesanan...</span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>
-                    {paymentMethod === 'online' ? 'Lanjut Bayar Online (QRIS)' : 'Kirim Pesanan ke Kasir'}
-                  </span>
+                  <span>Kirim Pesanan ke Kasir</span>
                 </>
               )}
             </button>
             <p className="text-[10px] text-center text-neutral-500 mt-2">
-              🔒 Dilengkapi proteksi transaksi aman & pencegahan pembayaran ganda.
+              Pesanan Anda akan langsung diteruskan ke sistem dapur dan dicatat di kasir.
             </p>
           </div>
         </form>
@@ -295,4 +256,3 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
     </div>
   );
 }
-

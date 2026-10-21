@@ -7,6 +7,7 @@ import MenuCustomModal from "./components/MenuCustomModal";
 import CartDrawer from "./components/CartDrawer";
 import CheckoutModal from "./components/CheckoutModal";
 import OrderSuccessModal from "./components/OrderSuccessModal";
+import OrderHistoryModal from "./components/OrderHistoryModal";
 import AdminPanel from "./components/AdminPanel";
 import { CartProvider, useCart } from "./context/CartContext";
 import { api } from "./services/api";
@@ -27,6 +28,7 @@ function MainApp() {
     const [selectedMenu, setSelectedMenu] = useState(null);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [orderSuccessData, setOrderSuccessData] = useState(null);
     const [isAdminView, setIsAdminView] = useState(() => {
         try {
@@ -65,7 +67,10 @@ function MainApp() {
     return (
         <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col pb-24 sm:pb-12">
             {/* Top Navbar */}
-            <Navbar onOpenCart={() => setIsCartOpen(true)} />
+            <Navbar 
+                onOpenCart={() => setIsCartOpen(true)} 
+                onOpenHistory={() => setIsHistoryOpen(true)} 
+            />
 
             <main className="max-w-6xl mx-auto px-4 py-6 w-full flex-1">
                 {isAdminView ? (
@@ -208,6 +213,12 @@ function MainApp() {
             <OrderSuccessModal
                 orderData={orderSuccessData}
                 onClose={() => setOrderSuccessData(null)}
+                onOpenHistory={() => setIsHistoryOpen(true)}
+            />
+
+            <OrderHistoryModal
+                isOpen={isHistoryOpen}
+                onClose={() => setIsHistoryOpen(false)}
             />
 
             {/* Footer */}
@@ -222,11 +233,18 @@ function MainApp() {
                             TikTok: @pedes_pooll
                         </p>
                     </div>
-                    <div className="flex items-center gap-4 text-neutral-400 font-medium">
-                        <span>Buka Setiap Hari: 10:00 - 22:00 WIB</span>
+                    <div className="flex items-center flex-wrap gap-3 sm:gap-4 text-neutral-400 font-medium text-[11px]">
+                        <button
+                            onClick={() => setIsHistoryOpen(true)}
+                            className="text-neutral-300 hover:text-white transition-colors underline"
+                        >
+                            Riwayat Pesanan
+                        </button>
+                        <span>•</span>
+                        <span>Buka: 10:00 - 22:00 WIB</span>
                         <button
                             onClick={() => setIsAdminView(!isAdminView)}
-                            className="text-neutral-600 hover:text-neutral-400 text-[11px] transition-colors"
+                            className="text-neutral-600 hover:text-neutral-400 transition-colors"
                         >
                             {isAdminView ? "Lihat Menu" : "Akses Kasir"}
                         </button>

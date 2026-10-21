@@ -48,28 +48,30 @@ export default function MenuCustomModal({ menu, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with image */}
-        <div className="relative h-44 sm:h-52 bg-neutral-800 shrink-0">
+        <div className="relative h-44 sm:h-52 bg-neutral-800 shrink-0 overflow-hidden">
           <img
             src={menu.image_url}
             alt={menu.name}
             className="w-full h-full object-cover"
           />
+          {/* Overlay warna hitam pudar untuk kontras teks */}
+          <div className="absolute inset-0 bg-black/50 pointer-events-none" />
           
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/90 transition-colors"
+            className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/90 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="absolute bottom-3 left-4 right-4">
-            <h3 className="font-extrabold text-lg sm:text-xl text-white">{menu.name}</h3>
-            <p className="text-xs text-neutral-300 font-medium">Rp {menu.price.toLocaleString('id-ID')} / porsi</p>
+          <div className="absolute bottom-3 left-4 right-4 z-10">
+            <h3 className="font-extrabold text-lg sm:text-xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{menu.name}</h3>
+            <p className="text-xs text-neutral-200 font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">Rp {menu.price.toLocaleString('id-ID')} / porsi</p>
           </div>
         </div>
 
-        {/* Scrollable Body */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-5">
+        {/* Scrollable Body (no scrollbar) */}
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 no-scrollbar">
           <p className="text-xs text-neutral-400 leading-relaxed">{menu.description}</p>
 
           {/* Pilihan Sambal (Khas Waroeng Pedes Puooll) */}
