@@ -1,6 +1,14 @@
 import { DUMMY_CATEGORIES, DUMMY_MENUS } from '../data/dummyData';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Base URL dinamis: mendukung environment variable VITE_API_BASE_URL,
+// akses via IP/Domain di jaringan lokal, maupun port standar Nginx
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    ? (window.location.port === '' || window.location.port === '80' || window.location.port === '443'
+        ? '/api'
+        : `http://${window.location.hostname}:8000/api`)
+    : 'http://localhost:8000/api'
+);
 const WAROENG_WA_PHONE = '6285230697857';
 
 const LEVEL_NAMES = {
