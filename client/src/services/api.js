@@ -1,13 +1,13 @@
 import { DUMMY_CATEGORIES, DUMMY_MENUS } from '../data/dummyData';
 
-// Base URL dinamis: mendukung environment variable VITE_API_BASE_URL,
-// akses via IP/Domain di jaringan lokal, maupun port standar Nginx
+// Base URL API:
+// 1. Jika ada environment variable VITE_API_BASE_URL, gunakan itu.
+// 2. Jika di localhost / dev lokal, gunakan http://localhost:8000/api.
+// 3. Jika di Vercel / production, default langsung ke server Armbian Anda.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (
-  typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
-    ? (window.location.port === '' || window.location.port === '80' || window.location.port === '443'
-        ? '/api'
-        : `http://${window.location.hostname}:8000/api`)
-    : 'http://localhost:8000/api'
+  typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000/api'
+    : 'https://api.meongganas.my.id/waroeng/api'
 );
 const WAROENG_WA_PHONE = '6285230697857';
 
